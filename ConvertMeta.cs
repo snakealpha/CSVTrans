@@ -12,11 +12,13 @@ namespace BlackCatWorkshop.Merge
     public class ConvertMeta
     {
         private string name;
+        private string package;
         private IEnumerable<MetadataField> fields;
         private Dictionary<string, MetadataField> fieldDictionary = new Dictionary<string,MetadataField>();
 
         public ConvertMeta(XElement rawMetadata)
         {
+            package = rawMetadata.Attribute(@"namespace").Value;
             name = rawMetadata.Attribute(@"name").Value;
             fields = from fieldInfo in rawMetadata.Elements(@"entry")
                      select new MetadataField(fieldInfo);
@@ -25,15 +27,6 @@ namespace BlackCatWorkshop.Merge
             {
                 fieldDictionary.Add(meta.Name, meta);
             }
-        }
-
-        /// <summary>
-        /// 基于Google Protobuff的类型元数据解析构造函数S
-        /// </summary>
-        /// <param name="protobuffMetaData"></param>
-        public ConvertMeta(string protobuffMetaData)
-        {
-            // todo 编写用于Google Protobuff的元数据整体分析方法
         }
 
         public string Name
@@ -58,6 +51,16 @@ namespace BlackCatWorkshop.Merge
             {
                 return fieldDictionary;
             }
+        }
+
+        public void GenerateAS3Type(string outputPath)
+        {
+
+        }
+
+        public void GenerateHeadType(string outputPath)
+        {
+
         }
     }
 }

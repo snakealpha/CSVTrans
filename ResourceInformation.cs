@@ -32,8 +32,11 @@ namespace BlackCatWorkshop.Merge
         private string nodeName;
 
         private string csvFileFullPath;
-        private string outputFileFullPath;
+        private string xmlOutputFileFullPath;
+        private string binOutputFileFullPath;
         private string metadataName;
+
+
         private IEnumerable<string> metadataFileFullPathes;
 
         public ResourceInformation(XElement resInfoElement, ConvertEnvironment resEnvironment)
@@ -41,8 +44,9 @@ namespace BlackCatWorkshop.Merge
             environment = resEnvironment;
 
             nodeName = resInfoElement.Attribute(@"Name").Value;
-            csvFileFullPath = environment.CsvPath + @"\" + resInfoElement.Attribute(@"ExcelFile").Value;
-            outputFileFullPath = Regex.Replace(environment.XmlOutputPath + @"\" + resInfoElement.Attribute(@"BinFile").Value, @"bin$", "xml");
+            csvFileFullPath = environment.CsvPath + @"\" + resInfoElement.Attribute(@"CSVFile").Value;
+            xmlOutputFileFullPath = Regex.Replace(environment.XmlOutputPath + @"\" + resInfoElement.Attribute(@"BinFile").Value, @"bin$", "xml");
+            binOutputFileFullPath = Regex.Replace(environment.BinPath + @"\" + resInfoElement.Attribute(@"BinFile").Value, @"bin$", "bin");
             metadataName = resInfoElement.Attribute(@"Meta").Value;
 
             IEnumerable<string> rawMetaSource = resInfoElement.Attribute(@"EntryMapFile").Value.Split(' ');
@@ -85,7 +89,18 @@ namespace BlackCatWorkshop.Merge
         {
             get
             {
-                return outputFileFullPath;
+                return xmlOutputFileFullPath;
+            }
+        }
+
+        /// <summary>
+        /// Bin文件输出路径
+        /// </summary>
+        public string BinOutputPath
+        {
+            get
+            {
+                return binOutputFileFullPath;
             }
         }
 
@@ -136,19 +151,6 @@ namespace BlackCatWorkshop.Merge
         }
 
         /// <summary>
-        /// 从Google Protobuff构建元数据库
-        /// </summary>
-        private void ConstructMetadataLibraryFromProto()
-        {
-            metadataDictionary = new Dictionary<string, ConvertMeta>();
-            macros = new Dictionary<string, int>();
-            foreach (string path in metadataFileFullPathes)
-            {
-                ReadMetadataFromProto(path);
-            }
-        }
-
-        /// <summary>
         /// 从TDR风格的Xml元数据文件中读取元数据
         /// </summary>
         /// <param name="metadataFilePath"></param>
@@ -168,19 +170,24 @@ namespace BlackCatWorkshop.Merge
         }
 
         /// <summary>
-        /// 从Google Protobuff风格重的元数据文件中读取元数据
+        /// 生成AS3使用的类型文件
         /// </summary>
-        /// <param name="metadataFilePath"></param>
-        public void ReadMetadataFromProto(string metadataFilePath)
+        public void GenerateAS3Type()
         {
-            // todo：编写protobuff文件分析方法
+            foreach (ConvertMeta info in metadataDictionary.Values)
+            {
+                info.GenerateAS3Type(environment.AsPath);
+            }
         }
 
-        public string Name
+        /// <summary>
+        /// 生成C/C++头文件
+        /// </summary>
+        public void GenerateHeadType()
         {
-            get
+            foreach (ConvertMeta info in metadataDictionary.Values)
             {
-                return nodeName;
+                info.GenerateHeadType(environment.HeadOutputPath);
             }
         }
     }

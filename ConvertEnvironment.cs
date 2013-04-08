@@ -12,16 +12,27 @@ namespace BlackCatWorkshop.Merge
         private string csvPath;
         private string xmlOutputPath;
         private string metaPath;
-        private string configOutputPath;
+        private string headPath;
+        private string binPath;
+        private string asPath;
+
         private Encoding convertEncoding;
 
-        public ConvertEnvironment(string csvPath, string xmlOutputPath, string configOutputPath, string metaPath, Encoding encoding)
+        public ConvertEnvironment(string csvPath, 
+                                  string metaPath, 
+                                  string xmlOutputPath, 
+                                  string headPath,
+                                  string binPath,
+                                  string asPath,
+                                  Encoding encoding)
         {
             this.csvPath = csvPath;
             this.xmlOutputPath = xmlOutputPath;
             this.metaPath = metaPath;
             this.convertEncoding = encoding;
-            this.configOutputPath = configOutputPath;
+            this.headPath = headPath;
+            this.binPath = binPath;
+            this.asPath = asPath;
         }
 
         /// <summary>
@@ -69,13 +80,35 @@ namespace BlackCatWorkshop.Merge
         }
 
         /// <summary>
-        /// 复合配置文件输出路径
+        /// 头文件的输出路径
         /// </summary>
-        public string ConfigOutputPath
+        public string HeadOutputPath
         {
             get
             {
-                return configOutputPath;
+                return headPath;
+            }
+        }
+
+        /// <summary>
+        /// 二进制文件的输出路径
+        /// </summary>
+        public string BinPath
+        {
+            get
+            {
+                return binPath;
+            }
+        }
+
+        /// <summary>
+        /// AS文件的输出路径
+        /// </summary>
+        public string AsPath
+        {
+            get
+            {
+                return asPath;
             }
         }
     }

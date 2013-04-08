@@ -54,14 +54,25 @@ namespace BlackCatWorkshop.Merge
         /// <returns>经生成的转换上下文</returns>
         public static ConvertContext Parse(XElement contextXml)
         {
-            XAttribute encodingName = contextXml.Attribute(@"Encoding");
+            //取得编码-来自综合配置文件的根节点
+            XAttribute encodingName = contextXml.Attribute(@"ResEncoding");
             Encoding encoding = Encoding.GetEncoding(encodingName.Value);
-            string baseCvsPath = contextXml.Element(@"CsvFilesPath").Attribute(@"Path").Value;
-            string baseOutputPath = contextXml.Element(@"XmlFilesPath").Attribute(@"Path").Value;
-            string baseMetaPath = contextXml.Element(@"MetaFilesPath").Attribute(@"Path").Value;
-            string baseConfigOutputPath = contextXml.Element(@"ConfigFilesPath").Attribute(@"Path").Value;
 
-            ConvertEnvironment appxEnvironment = new ConvertEnvironment(baseCvsPath, baseOutputPath, baseConfigOutputPath, baseMetaPath, encoding);
+            //CSV文件路径
+            string baseCvsPath = contextXml.Element(@"CSVFilePath").Attribute(@"Path").Value;
+            //元文件路径
+            string baseMetaPath = contextXml.Element(@"MetalibPath").Attribute(@"Path").Value;
+
+            //输出的XML文件路径
+            string baseOutputPath = contextXml.Element(@"XmlFilesPath").Attribute(@"Path").Value;
+            //输出的Bin文件路径
+            string baseBinOutputPath = contextXml.Element(@"BinFilesPath").Attribute(@"Path").Value;
+            //原文件输出的.h文件路径
+            string baseHeadOutputPath = contextXml.Element(@"HeadFilesPath").Attribute(@"Path").Value;
+            //原文件输出的As文件路径
+            string baseASOutputPath = contextXml.Element(@"ASPath").Attribute(@"Path").Value;
+
+            ConvertEnvironment appxEnvironment = new ConvertEnvironment(baseCvsPath, baseMetaPath, baseOutputPath, baseHeadOutputPath, baseBinOutputPath, baseASOutputPath, encoding);
 
             return new ConvertContext(appxEnvironment, contextXml);
         }

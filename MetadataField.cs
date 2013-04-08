@@ -15,12 +15,15 @@ namespace BlackCatWorkshop.Merge
         private bool isCollection;
         private string countString;
 
-        public MetadataField(string name, string type, string column, bool isCollection)
+        private string description;
+
+        public MetadataField(string name, string type, string column, bool isCollection, string description = "")
         {
             this.name = name;
             this.type = type;
             this.column = column;
             this.isCollection = isCollection;
+            this.description = description;
         }
 
         public MetadataField(XElement rawFieldData)
@@ -39,6 +42,11 @@ namespace BlackCatWorkshop.Merge
             if (isCollection)
             {
                 countString = rawFieldData.Attribute(@"count").Value;
+            }
+
+            if (rawFieldData.Attribute(@"desc") != null)
+            {
+                description = rawFieldData.Attribute(@"desc").Value;
             }
         }
 
