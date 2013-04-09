@@ -113,7 +113,45 @@ namespace BlackCatWorkshop.Merge
 
         public void GenerateHeadType(string outputPath)
         {
+            string codeString = "#ifndef Macros_Load" + Environment.NewLine +
+                                "#include Macros.h" + Environment.NewLine +
+                                "#endif" + Environment.NewLine +
+                                Environment.NewLine+
+                                "struct " + name + Environment.NewLine +
+                                "{" + Environment.NewLine;
+            foreach (MetadataField field in fieldDictionary.Values)
+            {
+                if (field.Type == "string")
+                {
+                    codeString += "    char[" + field.StringSize + "] ";
+                }
+                else
+                {
+                    codeString += "    " + field.Type + " ";
+                }
 
+                if (field.IsCollection)
+                {
+                    codeString += "[" + field.CountString + "] ";
+                }
+                codeString += field.Name + ";";
+                if (field.Description != null && field.Description != "")
+                {
+                    codeString += "        //" + field.Description;
+                }
+                codeString += Environment.NewLine;
+            }
+            codeString += "};";
+
+            StreamWriter output = File.CreateText(outputPath + "\\" + Name + ".h");
+            try
+            {
+                output.Write(codeString);
+            }
+            finally
+            {
+                output.Close();
+            }
         }
     }
 }

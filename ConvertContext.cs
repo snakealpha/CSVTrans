@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.IO;
 
 namespace BlackCatWorkshop.Merge
 {
@@ -24,7 +25,15 @@ namespace BlackCatWorkshop.Merge
                 select tree;
             foreach (XElement singleTree in trees)
             {
-                ConvertTree treeEntity = new ConvertTree(singleTree.Attribute(@"Name").Value);
+                ConvertTree treeEntity;
+                if (singleTree.Attribute(@"namespace") != null)
+                {
+                    treeEntity = new ConvertTree(singleTree.Attribute(@"Name").Value, singleTree.Attribute(@"namespace").Value);
+                }
+                else
+                {
+                    treeEntity = new ConvertTree(singleTree.Attribute(@"Name").Value);
+                }
                 convertTrees.Add(treeEntity);
 
                 IEnumerable<XElement> nodes =
@@ -96,6 +105,76 @@ namespace BlackCatWorkshop.Merge
             get
             {
                 return environment;
+            }
+        }
+
+        public void GenerateASConsts()
+        {
+            foreach (var tree in convertTrees)
+            {
+                GenerateSingleASConsts(tree);
+            }
+        }
+
+        public void GenerateCConsts()
+        {
+            foreach (var tree in convertTrees)
+            {
+                GenerateSingleCConsts(tree);
+            }
+        }
+
+        private void GenerateSingleASConsts(ConvertTree tree)
+        {
+            string consts = "package " + tree.NameSpace + System.Environment.NewLine +
+                            "{" + System.Environment.NewLine +
+                            "    public class Macros" + System.Environment.NewLine +
+                            "    {" + System.Environment.NewLine;
+
+            string collection = "";
+            foreach (ConvertNode node in tree)
+            {
+                foreach (ResourceInformation info in node)
+                {
+                    collection += info.GenerateAS3Consts();
+                }
+            }
+            consts += collection;
+
+            consts += "    }" + System.Environment.NewLine +
+                      "}";
+
+            StreamWriter output = File.CreateText(environment.AsPath + "\\Macros.as");
+            try
+            {
+                output.Write(consts);
+            }
+            finally
+            {
+                output.Close();
+            }
+        }
+
+        private void GenerateSingleCConsts(ConvertTree tree)
+        {
+            string collection = "#define Macros_Load" + System.Environment.NewLine +
+                                System.Environment.NewLine;
+            foreach (ConvertNode node in tree)
+            {
+                foreach (ResourceInformation info in node)
+                {
+                    collection += info.GenerateHeadConsts();
+                }
+            }
+
+            StreamWriter output = File.CreateText(environment.HeadOutputPath + "\\Macros.h");
+            try
+            {
+                output.Write(collection);
+            }
+            finally
+            {
+                output.Close();
             }
         }
     }

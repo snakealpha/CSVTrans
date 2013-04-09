@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using System.IO;
 
 namespace BlackCatWorkshop.Merge
 {
@@ -22,6 +23,8 @@ namespace BlackCatWorkshop.Merge
         private Dictionary<string, ConvertMeta> metadataDictionary = null;
 
         private Dictionary<string, int> macros = null;
+
+        private string package;
 
         /// <summary>
         /// 传导获取的全局环境文件
@@ -158,6 +161,11 @@ namespace BlackCatWorkshop.Merge
         {
             XElement metadataElement = XElement.Load(metadataFilePath);
 
+            if (metadataElement.Attribute(@"namespace") != null)
+            {
+                package = metadataElement.Attribute(@"namespace").Value;
+            }
+
             foreach (XElement ele in metadataElement.Elements(@"struct"))
             {
                 ConvertMeta meta = new ConvertMeta(ele);
@@ -167,6 +175,30 @@ namespace BlackCatWorkshop.Merge
             {
                 macros.Add(ele.Attribute("name").Value, Convert.ToInt32(ele.Attribute("value").Value));
             }
+        }
+
+        public string GenerateAS3Consts()
+        {
+            string consts = "";
+            foreach (string macro in macros.Keys)
+            {
+                string constString = "        public static const " + macro + ":int = " + macros[macro] + ";" + Environment.NewLine;
+                consts += constString;
+            }
+
+            return consts;
+        }
+
+        public string GenerateHeadConsts()
+        {
+            string consts = "";
+            foreach (string macro in macros.Keys)
+            {
+                string constString = "#define " + macro + " " + macros[macro] + Environment.NewLine;
+                consts += constString;
+            }
+
+            return consts;
         }
 
         /// <summary>

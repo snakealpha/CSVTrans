@@ -10,10 +10,12 @@ namespace BlackCatWorkshop.Merge
     public class ConvertTree:List<ConvertNode>
     {
         private string treeName;
+        private string nameSpace;
 
-        public ConvertTree(string name)
+        public ConvertTree(string name, string nameSpace = "")
         {
             treeName = name;
+            this.nameSpace = nameSpace;
         }
 
         public string TreeName
@@ -21,6 +23,14 @@ namespace BlackCatWorkshop.Merge
             get
             {
                 return treeName;
+            }
+        }
+
+        public string NameSpace
+        {
+            get
+            {
+                return nameSpace;
             }
         }
     }

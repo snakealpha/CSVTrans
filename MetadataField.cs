@@ -15,6 +15,8 @@ namespace BlackCatWorkshop.Merge
         private bool isCollection;
         private string countString;
 
+        private string stringSize = "0";
+
         private string description;
 
         public MetadataField(string name, string type, string column, bool isCollection, string description = "")
@@ -42,6 +44,11 @@ namespace BlackCatWorkshop.Merge
             if (isCollection)
             {
                 countString = rawFieldData.Attribute(@"count").Value;
+            }
+
+            if (rawFieldData.Attribute(@"size") != null)
+            {
+                stringSize = rawFieldData.Attribute(@"size").Value;
             }
 
             if (rawFieldData.Attribute(@"desc") != null)
@@ -95,6 +102,14 @@ namespace BlackCatWorkshop.Merge
             get
             {
                 return description;
+            }
+        }
+
+        public string StringSize
+        {
+            get
+            {
+                return stringSize;
             }
         }
     }
