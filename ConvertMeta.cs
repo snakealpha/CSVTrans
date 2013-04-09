@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System;
+using System.IO;
 
 namespace BlackCatWorkshop.Merge
 {
@@ -14,10 +16,23 @@ namespace BlackCatWorkshop.Merge
         private string name;
         private string package;
         private IEnumerable<MetadataField> fields;
-        private Dictionary<string, MetadataField> fieldDictionary = new Dictionary<string,MetadataField>();
+        private Dictionary<string, MetadataField> fieldDictionary = new Dictionary<string, MetadataField>();
+
+        private Dictionary<string, string> asTypeMap = new Dictionary<string, string>();
 
         public ConvertMeta(XElement rawMetadata)
         {
+            if (asTypeMap.Keys.Count == 0)
+            {
+                asTypeMap.Add("string", "String");
+                asTypeMap.Add("int", "int");
+                asTypeMap.Add("uint", "uint");
+                asTypeMap.Add("double", "Number");
+                asTypeMap.Add("float", "Number");
+                asTypeMap.Add("number", "Number");
+                asTypeMap.Add("collection", "Array");
+            }
+
             package = rawMetadata.Attribute(@"namespace").Value;
             name = rawMetadata.Attribute(@"name").Value;
             fields = from fieldInfo in rawMetadata.Elements(@"entry")
@@ -55,7 +70,45 @@ namespace BlackCatWorkshop.Merge
 
         public void GenerateAS3Type(string outputPath)
         {
+            string codeString = "package " + package + Environment.NewLine +
+                                "{" + Environment.NewLine +
+                                "    public class " + name + Environment.NewLine +
+                                "    {" + Environment.NewLine;
 
+            foreach (MetadataField meta in fieldDictionary.Values)
+            {
+                string fieldString = "";
+                if (meta.Description != null && meta.Description != "")
+                {
+                    fieldString += "        //" + meta.Description + Environment.NewLine;
+                }
+                fieldString += "        public var " + meta.Name + ":";
+                if (meta.IsCollection)
+                {
+                    fieldString += asTypeMap["collection"] + " = [];" + Environment.NewLine;
+                }
+                else
+                {
+                    if (asTypeMap.ContainsKey(meta.Type))
+                    {
+                        fieldString += asTypeMap[meta.Type] + ";" + Environment.NewLine;
+                    }
+                }
+                codeString += fieldString + Environment.NewLine;
+            }
+
+            codeString += "    }" + Environment.NewLine +
+                          "}";
+
+            StreamWriter output = File.CreateText(outputPath + "\\" + Name + ".as");
+            try
+            {
+                output.Write(codeString);
+            }
+            finally
+            {
+                output.Close();
+            }
         }
 
         public void GenerateHeadType(string outputPath)

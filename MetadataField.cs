@@ -50,15 +50,6 @@ namespace BlackCatWorkshop.Merge
             }
         }
 
-        /// <summary>
-        /// 基于Google Protobuff的元数据字段解析构造方法
-        /// </summary>
-        /// <param name="protobuffMetaField"></param>
-        public MetadataField(string protobuffMetaField)
-        {
-            // todo 编写用于Google Protobuff的元数据字段构造方法
-        }
-
         public string Name
         {
             get
@@ -96,6 +87,14 @@ namespace BlackCatWorkshop.Merge
             get
             {
                 return countString;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return description;
             }
         }
     }
