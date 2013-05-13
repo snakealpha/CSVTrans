@@ -73,13 +73,29 @@ namespace BlackCatWorkshop.Merge
             string baseMetaPath = contextXml.Element(@"MetalibPath").Attribute(@"Path").Value;
 
             //输出的XML文件路径
-            string baseOutputPath = contextXml.Element(@"XmlFilesPath").Attribute(@"Path").Value;
+            string baseOutputPath = null;
+            if (contextXml.Element(@"XmlFilesPath") != null)
+            {
+                baseOutputPath = contextXml.Element(@"XmlFilesPath").Attribute(@"Path").Value;
+            }
             //输出的Bin文件路径
-            string baseBinOutputPath = contextXml.Element(@"BinFilesPath").Attribute(@"Path").Value;
+            string baseBinOutputPath = null;
+            if(contextXml.Element(@"BinFilesPath") != null)
+            {
+                baseBinOutputPath = contextXml.Element(@"BinFilesPath").Attribute(@"Path").Value;
+            }
             //原文件输出的.h文件路径
-            string baseHeadOutputPath = contextXml.Element(@"HeadFilesPath").Attribute(@"Path").Value;
+            string baseHeadOutputPath = null;
+            if (contextXml.Element(@"HeadFilesPath") != null)
+            {
+                baseHeadOutputPath = contextXml.Element(@"HeadFilesPath").Attribute(@"Path").Value;
+            }
             //原文件输出的As文件路径
-            string baseASOutputPath = contextXml.Element(@"ASPath").Attribute(@"Path").Value;
+            string baseASOutputPath = null;
+            if (contextXml.Element(@"ASPath") != null)
+            {
+                baseASOutputPath = contextXml.Element(@"ASPath").Attribute(@"Path").Value;
+            }
 
             ConvertEnvironment appxEnvironment = new ConvertEnvironment(baseCvsPath, baseMetaPath, baseOutputPath, baseHeadOutputPath, baseBinOutputPath, baseASOutputPath, encoding);
 

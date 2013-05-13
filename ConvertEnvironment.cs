@@ -16,6 +16,11 @@ namespace BlackCatWorkshop.Merge
         private string binPath;
         private string asPath;
 
+        private bool genXml = true;
+        private bool genBin = true;
+        private bool genAS = true;
+        private bool genHead = true;
+
         private Encoding convertEncoding;
 
         public ConvertEnvironment(string csvPath, 
@@ -33,6 +38,23 @@ namespace BlackCatWorkshop.Merge
             this.headPath = headPath;
             this.binPath = binPath;
             this.asPath = asPath;
+
+            if (xmlOutputPath == null)
+            {
+                genXml = false;
+            }
+            if (binPath == null)
+            {
+                genBin = false;
+            }
+            if (asPath == null)
+            {
+                genHead = false;
+            }
+            if (headPath == null)
+            {
+                genHead = false;
+            }
         }
 
         /// <summary>
@@ -109,6 +131,38 @@ namespace BlackCatWorkshop.Merge
             get
             {
                 return asPath;
+            }
+        }
+
+        public bool GenXml
+        {
+            get
+            {
+                return genXml;
+            }
+        }
+
+        public bool GenBin
+        {
+            get
+            {
+                return genBin;
+            }
+        }
+
+        public bool GenAs
+        {
+            get
+            {
+                return genAS;
+            }
+        }
+
+        public bool GenHead
+        {
+            get
+            {
+                return genHead;
             }
         }
     }

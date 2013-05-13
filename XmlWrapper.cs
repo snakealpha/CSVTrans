@@ -29,7 +29,7 @@ namespace BlackCatWorkshop.Merge
 
         private static XElement WrapGlobal(ResourceInformation generateInfo, CsvFile csvInfo)
         {
-            XElement root = new XElement(generateInfo.MetadataName + "_Tab");
+            XElement root = new XElement(generateInfo.NodeName + "_Tab");
             for (int i = 0; i != csvInfo.CsvElements.Count; i++)
             {
                 root.Add(WrapElement(generateInfo, csvInfo, csvInfo.CsvElements[i]));
@@ -52,7 +52,7 @@ namespace BlackCatWorkshop.Merge
 
                 try
                 {
-                    if (field.IsCollection && (generateInfo.Metadatas.ContainsKey(field.Type) || field.Type == "string"))
+                    if (field.IsCollection && (generateInfo.Metadatas.ContainsKey(field.Type) || field.Type.ToLower() == "string"))
                     {
                         for (int j = 0; j != Convert.ToInt32(field.CountString); j++)
                         {
@@ -124,14 +124,14 @@ namespace BlackCatWorkshop.Merge
             if (csvInfo.CsvTitleIndex.ContainsKey(field.ColumnName) &&
                 value[csvInfo.CsvTitleIndex[field.ColumnName]] != "" &&
                 (
-                    field.Type == "string" ||
+                    field.Type.ToLower() == "string" ||
                     Regex.IsMatch(value[csvInfo.CsvTitleIndex[field.ColumnName]], "^-?[0-9]+(\\.[0-9]+)?$")
                 )
                )
             {
                 root.Value = value[csvInfo.CsvTitleIndex[field.ColumnName]];
             }
-            else if (field.Type == "string")
+            else if (field.Type.ToLower() == "string")
             {
                 root.Value = "";
             }
@@ -183,7 +183,7 @@ namespace BlackCatWorkshop.Merge
         {
             string column;
 
-            if (field.Type == "string" && csvInfo.CsvTitleIndex.ContainsKey(field.ColumnName + (complexCollectionIndex + 1).ToString()))
+            if (field.Type.ToLower() == "string" && csvInfo.CsvTitleIndex.ContainsKey(field.ColumnName + (complexCollectionIndex + 1).ToString()))
             {
                 column = value[csvInfo.CsvTitleIndex[field.ColumnName + (complexCollectionIndex + 1).ToString()]];
             }

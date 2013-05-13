@@ -25,6 +25,7 @@ namespace BlackCatWorkshop.Merge
             if (asTypeMap.Keys.Count == 0)
             {
                 asTypeMap.Add("string", "String");
+                asTypeMap.Add("String", "String");
                 asTypeMap.Add("int", "int");
                 asTypeMap.Add("uint", "uint");
                 asTypeMap.Add("double", "Number");
@@ -93,6 +94,10 @@ namespace BlackCatWorkshop.Merge
                     {
                         fieldString += asTypeMap[meta.Type] + ";" + Environment.NewLine;
                     }
+                    else
+                    {
+                        fieldString += meta.Type + ";" + Environment.NewLine;
+                    }
                 }
                 codeString += fieldString + Environment.NewLine;
             }
@@ -116,7 +121,7 @@ namespace BlackCatWorkshop.Merge
             string codeString = "#ifndef Macros_Load" + Environment.NewLine +
                                 "#include Macros.h" + Environment.NewLine +
                                 "#endif" + Environment.NewLine +
-                                Environment.NewLine+
+                                Environment.NewLine +
                                 "struct " + name + Environment.NewLine +
                                 "{" + Environment.NewLine;
             foreach (MetadataField field in fieldDictionary.Values)

@@ -108,6 +108,17 @@ namespace BlackCatWorkshop.Merge
         }
 
         /// <summary>
+        /// 获得节点识别名称
+        /// </summary>
+        public string NodeName
+        {
+            get
+            {
+                return nodeName;
+            }
+        }
+
+        /// <summary>
         /// 用于解析的元数据名称
         /// </summary>
         public string MetadataName
